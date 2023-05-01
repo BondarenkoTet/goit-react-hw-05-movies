@@ -1,43 +1,55 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
-import {getMovie} from "../services/search";
-import {Link, Outlet} from 'react-router-dom';
+import {searchMovie} from "../services/search";
+import {Link, useSearchParams, useLocation} from 'react-router-dom';
 //import { useParams } from 'react-router-dom';
 
 
 const MoviesPage = () => {
-  //const [query, setQuery] = useState([]);
+  const [movies, setMovies] = useState([]);
 
-  // const {params} = useParams();
-  // console.log(params);
+  const[searchParams, setSearchParams]= useSearchParams();
+  const queryMovie = searchParams.get("query") ?? "";
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if(queryMovie) {
+    searchMovie(queryMovie)
+    .then(data => setMovies(data.data.results))
+    }
+  }, [queryMovie]);
   
-//onClickMovies() =(e => {})
-
-  // useEffect(() => {
-  // if(query) {
-  // getMovie().then(query => {
-  // setQuery(query.results)
-  // })
-  // }
-  // }, [query]);
+  const handleSubmit = e => {
+    e.preventDefault()
+    setSearchParams({ query: e.target[0].value });
+    searchMovie(queryMovie)
+    e.target.reset()
+    }; 
+      
   return (
     <>
-    <h2>Additional information</h2> 
-    <ul>
-        <li>
-          <Link to="cast">Cast</Link>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+      />
+      <button>Search</button>
+    </form>
+    
+    {movies.length >0 &&(
+      <ul>
+        {movies.map(movie => (
+          <li key = {movie.id}>
+            <Link to={`/movies/${movie.id}`} 
+                  state={{from: location}}>
+            <h2>{movie.title}</h2> 
+            </Link>
         </li>
-        <li>
-          <Link to="reviews">Reviews</Link>
-        </li>
-        
+      ))}
       </ul>
-      <Outlet />
-      </>
-    
-    
-    // < key={} to={`${{}}`}></ link>
+    )}
+    </>
   )
 }
 
-export default MoviesPage
+export default MoviesPage;

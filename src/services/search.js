@@ -10,16 +10,29 @@ export async function getTrendingMovies() {
     return  trendingMovies;
 } 
 
-export async function getMovieDetails(id) {
+export async function getMovieDetails(movieId) {
     const details = await axios.get(
-`${BASE_URL}/movie/${id}?&api_key=${APY_KEY}`
+    `${BASE_URL}/movie/${movieId}?&api_key=${APY_KEY}`
     );
     return details;
+}
+export async function getCast(movieId) {
+    const cast = await axios.get(
+    `${BASE_URL}/movie/${movieId}/credits?&api_key=${APY_KEY}`
+    );
+    return cast;
+}
+
+export async function getReviews(movieId) {
+    const reviews = await axios.get(
+    `${BASE_URL}/movie/${movieId}/reviews?&api_key=${APY_KEY}`
+    );
+    return reviews
 }
 
 export async function searchMovie(query) {
     const movie = await axios.get(
-        `${BASE_URL}/search/movie?api_key=${APY_KEY}&query=${query}`
+    `${BASE_URL}/search/movie?api_key=${APY_KEY}&query=${query}`
     );
     return movie;
 }
